@@ -7,9 +7,11 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LaunchCode
@@ -50,8 +52,11 @@ public class JobData {
 
         // load data, if not already loaded
         loadData();
-
-        return allJobs;
+        ArrayList<HashMap<String, String>> entityJobs = new ArrayList<>();
+        for(HashMap<String, String> job: allJobs){
+            entityJobs.add(job);
+        }
+        return entityJobs;
     }
 
     /**
@@ -69,14 +74,14 @@ public class JobData {
 
         // load data, if not already loaded
         loadData();
-
+        String lcValue = value.toLowerCase();
         ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
 
         for (HashMap<String, String> row : allJobs) {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(lcValue)) {
                 jobs.add(row);
             }
         }
@@ -123,6 +128,22 @@ public class JobData {
             System.out.println("Failed to load job data");
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<HashMap<String, String>> findByValue(String searchTerm){
+        loadData();
+        ArrayList<HashMap<String, String>> retVal = new ArrayList<>();
+        String lcSearchTerm = searchTerm.toLowerCase();
+        for(HashMap<String, String> row: allJobs){
+            for(String s: row.values()){
+                if(s.toLowerCase().indexOf(lcSearchTerm) >=0){
+                    retVal.add(row);
+                    break;
+                }
+
+            }
+        }
+        return retVal;
     }
 
 }
